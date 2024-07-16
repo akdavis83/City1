@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<title>City</title>
+<link rel="icon" href="https://fav.farm/🔥" />
+
+
+<script src='vendor/three.js/build/three.min.js'></script>
+<script src='vendor/three.js/examples/js/controls/FirstPersonControls.js'></script>
+<script src='../threex.proceduralcity.js'></script>
+<body style='margin: 0px; background-color: #d8e7ff; overflow: hidden;'>
+	<body style='margin: 0px; overflow: hidden;' class="gradient">
+		<h1 style="color: rgb(255, 255, 255);" class="averia-gruesa-libre-regular">
+			(Proverbs 16:32) He that is slow to anger is better than the mighty; and he that ruleth his spirit than he that taketh a city.
+		</h1>
+	<script>
+	var updateFcts	= [];
+	var scene	= new THREE.Scene();
+	scene.fog	= new THREE.FogExp2( 0xd0e0f0, 0.0025 );
+
+	var renderer	= new THREE.WebGLRenderer( { antialias: false } );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var camera		= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 3000)
+	camera.position.y	= 80
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add an object and make it move					//
+	//////////////////////////////////////////////////////////////////////////////////		
+	var light	= new THREE.HemisphereLight( 0xfffff0, 0x101020, 1.25 );
+	light.position.set( 0.75, 1, 0.25 );
+	scene.add( light );
+
+	var material	= new THREE.MeshBasicMaterial({ color: 0x101018 })
+	var geometry	= new THREE.PlaneGeometry( 2000, 2000 )
+	var plane	= new THREE.Mesh( geometry, material );
+	plane.rotation.x= - 90 * Math.PI / 180;
+	scene.add( plane );
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var city	= new THREEx.ProceduralCity()
+	scene.add(city)
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		Camera Controls							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var controls	= new THREE.FirstPersonControls( camera );
+	controls.movementSpeed	= 20;
+	controls.lookSpeed	= 0.05;
+	controls.lookVertical	= true;
+	updateFcts.push(function(delta, now){
+		controls.update( delta );		
+	})
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		render the scene						//
+	//////////////////////////////////////////////////////////////////////////////////
+	updateFcts.push(function(){
+		renderer.render( scene, camera );		
+	})
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		loop runner							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var lastTimeMsec= null
+	requestAnimationFrame(function animate(nowMsec){
+		// keep looping
+		requestAnimationFrame( animate );
+		// measure time
+		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
+		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
+		lastTimeMsec	= nowMsec
+		// call each update function
+		updateFcts.forEach(function(updateFn){
+			updateFn(deltaMsec/1000, nowMsec/1000)
+		})
+	})
+	// Create an array to store the character objects
+var characters = [];
+
+// Load the character model
+var loader = new THREE.OBJLoader();
+loader.load('./THREEX.PROCEDURALCITY-MASTER/kraang-robot/source/KraangRobot3.fbx', function(object) {
+  // Create multiple instances of the character
+  for (var i = 0; i < 10; i++) { // Add 10 characters
+    var character = object.clone(); // Clone the original object
+    character.position.set(Math.random() * 100, 0, Math.random() * 100); // Random position
+    character.scale.set(0.1, 0.1, 0.1); // Scale
+    characters.push(character); // Add to the array
+    scene.add(character); // Add to the scene
+  }
+});
+
+</script>
+<div id="tunnel"></div>
+<script src="../game mechanics/z_libs/TrackballControls.js"></script>
+	<script src="../game mechaincs/z_libs/dat.gui.min.js"></script>
+	<script src="../game mechaincs/z_libs/three.min.js"></script>
+
+</body>
+	
